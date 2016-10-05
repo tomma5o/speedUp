@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+
+  "name": "MoSto",
+  "description": "A simple shortcut to navigate in the countries and change to mobile in one click",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "assets/icon.png",
+    "default_popup": "popup.html",
+    "default_title": "MoSto"
+  },
+
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
