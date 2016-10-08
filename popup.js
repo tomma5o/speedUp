@@ -1,39 +1,63 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  function getCurrentTabUrl () {
+  getCurrentTab_Url ();
+  var  url,
+        tab;
+
+  function getCurrentTab_Url () {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-      var tab = tabs[0],
+      tab = tabs[0],
       url = tab.url;
-      console.log(url);
+
+      console.log(tab, url);
     });
   };
+
   function  pushLanguage (lang) {
-    chrome.tabs.query({ active: true, currentWindow: true },  function(tabs) {
-      var    tab = tabs[0],
-      urlArr = tab.url.split("/");
-      updateUrl = urlArr[3] = lang,
-      newUrl = urlArr.join("/");
+      var  urlArr = tab.url.split("/"),
+            updateUrl = urlArr[3] = lang,
+            newUrl = urlArr.join("/");
+
       console.log(newUrl);
       chrome.tabs.update(tab.id, {url: newUrl});
-    });
-  };
-  function  getCookie () {
-    chrome.tabs.query({ active: true, currentWindow: true },  function(tabs) {
-      var tab = tabs[0],
-      cookie = tab.cookies;
-
-      console.log(cookie);
-      //chrome.tabs.reload();
-    });
   };
 
-//get cookies and change desktop to mobie and viceversa
+  function getCookies(domain, name, callback) {
+      chrome.cookies.get({"url": domain, "name": name}, function(cookie) {
+          if(callback) {
+              callback(cookie.value);
+          }
+      });
+  };
+
+//get cookies and change desktop to mobile and viceversa
 var switch_menu = document.getElementsByClassName("switch_menu")[0];
 
 switch_menu.addEventListener("click", function (e) {
-  var languageClass = e.target.getAttribute("id");
-  console.log(e.target)
+  var  divID = e.target.id,
+        desktop = "device=desktop",
+        mobile = "device=smartphone";
+
+  getCookies(url, "UI", function (UI) {
+      var  cookie = UI.split("&");
+
+      if (divID === "mobile") {
+        cookie[4] = mobile;
+        var j = cookie.join("&");
+        console.log("iconMobile |", j);
+        chrome.cookies.remove({"url": url, "name": "UI"});
+        chrome.cookies.set({"url": url, "name": "UI", "value": j});
+        chrome.tabs.reload();
+      } else if (divID === "desktop") {
+        cookie[4] = desktop;
+        var j = cookie.join("&");
+        console.log("iconMobile |", j);
+        chrome.cookies.remove({"url": url, "name": "UI"});
+        chrome.cookies.set({"url": url, "name": "UI", "value": j});
+        chrome.tabs.reload();
+      };
+  });
 });
 
 // get class of ul an put in pushLanguage function
