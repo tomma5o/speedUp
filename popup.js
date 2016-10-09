@@ -14,11 +14,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   };
 
-  function  pushLanguage (lang) {
-      var  urlArr = tab.url.split("/"),
-            updateUrl = urlArr[3] = lang,
-            newUrl = urlArr.join("/");
+  function checkLang(array, language) {
 
+  };
+
+  function  pushLanguage (lang) {
+      var  urlArr = tab.url.split("/");
+
+      //check language in a url array
+      for (var i = 0; urlArr.length > i; i++) {
+        if (urlArr[i].length === 2) {
+          urlArr[i] = lang;
+        };
+      };
+      var newUrl = urlArr.join("/");
       console.log(newUrl);
       chrome.tabs.update(tab.id, {url: newUrl});
   };
@@ -42,21 +51,31 @@ switch_menu.addEventListener("click", function (e) {
   getCookies(url, "UI", function (UI) {
       var  cookie = UI.split("&");
 
-      if (divID === "mobile") {
-        cookie[4] = mobile;
-        var j = cookie.join("&");
-        console.log("iconMobile |", j);
-        chrome.cookies.remove({"url": url, "name": "UI"});
-        chrome.cookies.set({"url": url, "name": "UI", "value": j});
-        chrome.tabs.reload();
-      } else if (divID === "desktop") {
-        cookie[4] = desktop;
-        var j = cookie.join("&");
-        console.log("iconMobile |", j);
-        chrome.cookies.remove({"url": url, "name": "UI"});
-        chrome.cookies.set({"url": url, "name": "UI", "value": j});
-        chrome.tabs.reload();
-      };
+          if (divID === "mobile") {
+            for (var i = 0; cookie.length > i; i++) {
+              if (cookie[i].toLowerCase() === desktop) {
+                cookie[i] = mobile;
+                console.log(cookie[i]);
+                var j = cookie.join("&");
+                console.log(j);
+                chrome.cookies.remove({"url": url, "name": "UI"});
+                chrome.cookies.set({"url": url, "name": "UI", "value": j});
+                chrome.tabs.reload();
+              };
+            };
+          } else if (divID === "desktop") {
+              for (var i = 0; cookie.length > i; i++) {
+                if (cookie[i].toLowerCase()  === mobile) {
+                cookie[i] = desktop;
+                console.log(cookie[i]);
+                var j = cookie.join("&");
+                console.log(j);
+                chrome.cookies.remove({"url": url, "name": "UI"});
+                chrome.cookies.set({"url": url, "name": "UI", "value": j});
+                chrome.tabs.reload();
+              };
+            };
+          };
   });
 });
 
